@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.RectF
 import android.provider.SyncStateContract.Helpers.update
 import android.util.Log
 import android.view.SurfaceView
@@ -31,6 +32,15 @@ class LiveDrawingView(
      private var drawing: Boolean = false
      private var paused = true
 
+     private var resetButton: RectF
+     private var togglePauseButton: RectF
+
+     init {
+         resetButton = RectF(0f , 0f, 100f , 100f)
+         togglePauseButton = RectF(0f, 150f , 100f , 250f)
+     }
+
+
 
 
 
@@ -43,6 +53,9 @@ class LiveDrawingView(
              paint.color=Color.argb(255,255,255,255)
              paint.textSize=fontSize.toFloat()
 
+             canvas.drawRect(resetButton, paint)
+             canvas.drawRect(togglePauseButton, paint)
+
              if(debugging){
                  printDebuggingText()
              }
@@ -53,10 +66,10 @@ class LiveDrawingView(
      private fun printDebuggingText(){
 
          val debugSize = fontSize/2
-         val debugStart = 150
+         val debugStart = 250
          paint.textSize = debugSize.toFloat()
          canvas.drawText("fps: $fps",
-             10f, (debugStart + debugSize).toFloat(),paint)
+             50f, (debugStart + debugSize).toFloat(),paint)
      }
 
      override fun run() {
