@@ -24,9 +24,11 @@ class MainActivity : Activity() {
 
     override fun onResume() {
         super.onResume()
+        liveDrawingView.resume()
     }
 
     override fun onPause() {
         super.onPause()
+        liveDrawingView.pause()
     }
 }
