@@ -1,12 +1,10 @@
 package com.example.livedrawing
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.RectF
+import android.graphics.*
 import android.provider.SyncStateContract.Helpers.update
 import android.util.Log
+import android.view.MotionEvent
 import android.view.SurfaceView
 
 
@@ -34,16 +32,19 @@ class LiveDrawingView(
 
      private var resetButton: RectF
      private var togglePauseButton: RectF
+     private var setting: RectF
 
      private val particleSystems = ArrayList<ParticleSystem>()
 
      private var nextSystem = 0
-     private val maxSystems = 10000000
+     private val maxSystems = 1000
      private val particlesPerSystem = 100
 
      init {
-         resetButton = RectF(0f , 0f, 100f , 100f)
-         togglePauseButton = RectF(0f, 150f , 100f , 250f)
+         resetButton = RectF(30f , 40f, 200f , 100f)
+         togglePauseButton = RectF(30f, 140f , 200f , 200f)
+         setting = RectF(700f,100f,100f,500f)
+
 
          for(i in 0 until maxSystems){
              particleSystems.add(ParticleSystem())
@@ -65,10 +66,30 @@ class LiveDrawingView(
              canvas = holder.lockCanvas()
              canvas.drawColor(Color.argb(255,0,0,0))
              paint.color=Color.argb(255,255,255,255)
-             paint.textSize=fontSize.toFloat()
+
+
+             for(i in 0 until nextSystem){
+                 particleSystems[i].draw(canvas , paint)
+             }
 
              canvas.drawRect(resetButton, paint)
              canvas.drawRect(togglePauseButton, paint)
+             canvas.drawRect(setting,paint)
+
+
+             paint.color=Color.argb(255,255,0,0)
+
+             paint.textSize = 60f
+             canvas.drawText("Reset",
+                 44f , 85f
+                 ,paint)
+
+             canvas.drawText("Magic",
+                 42f , 185f
+                 ,paint)
+
+             paint.textSize=fontSize.toFloat()
+             paint.color=Color.argb(255,255,255,51)
 
              if(debugging){
                  printDebuggingText()
@@ -84,6 +105,14 @@ class LiveDrawingView(
          paint.textSize = debugSize.toFloat()
          canvas.drawText("fps: $fps",
              50f, (debugStart + debugSize).toFloat(),paint)
+
+         canvas.drawText("Systems: $nextSystem",
+             10f , (fontMargin + debugStart + debugSize *2).toFloat()
+         ,paint)
+
+         canvas.drawText("Particles : ${nextSystem * particlesPerSystem}",
+             10f, (fontMargin + debugStart + debugSize * 3).toFloat(),
+             paint)
      }
 
      override fun run() {
@@ -120,6 +149,46 @@ class LiveDrawingView(
 
      private fun update(){
 
+         for( i in 0 until particleSystems.size){
+             if(particleSystems[i].isRunning){
+                 particleSystems[i].update(fps)
+             }
+         }
+     }
+
+     override fun onTouchEvent(event: MotionEvent): Boolean {
+
+         if(event.action and MotionEvent
+                 .ACTION_MASK==
+                 MotionEvent.ACTION_MOVE){
+
+             particleSystems[nextSystem].emitParticles(
+                 PointF(event.x, event.y)
+             )
+
+             nextSystem++
+
+             if(nextSystem == maxSystems){
+                 nextSystem = 0
+             }
+         }
+
+         if(event.action and MotionEvent.ACTION_MASK==
+                 MotionEvent.ACTION_DOWN){
+             if(resetButton.contains(event.x,event.y)){
+                 nextSystem=0
+             }
+
+             if(togglePauseButton.contains(event.x, event.y)){
+                 paused = !paused
+             }
+
+             if(setting.contains(event.x, event.y)){
+
+             }
+         }
+
+         return true
      }
 
  }

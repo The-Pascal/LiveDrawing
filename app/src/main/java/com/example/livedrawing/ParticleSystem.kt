@@ -68,12 +68,12 @@ class ParticleSystem {
         for( p in particles){
 
             // Option 1 - Colored particles
-            //paint.setARGB(255, random.nextInt(256),
-            //random.nextInt(256),
-            //random.nextInt(256))
+            paint.setARGB(255, random.nextInt(256),
+            random.nextInt(256),
+            random.nextInt(256))
 
             // Option 2 - White particles
-            paint.color = Color.argb(255, 255, 255, 255)
+            //paint.color = Color.argb(255, 255, 255, 255)
             // How big is each particle?
 
             // Option 1 - Big particles
