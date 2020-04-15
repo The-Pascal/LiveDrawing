@@ -35,9 +35,23 @@ class LiveDrawingView(
      private var resetButton: RectF
      private var togglePauseButton: RectF
 
+     private val particleSystems = ArrayList<ParticleSystem>()
+
+     private var nextSystem = 0
+     private val maxSystems = 10000000
+     private val particlesPerSystem = 100
+
      init {
          resetButton = RectF(0f , 0f, 100f , 100f)
          togglePauseButton = RectF(0f, 150f , 100f , 250f)
+
+         for(i in 0 until maxSystems){
+             particleSystems.add(ParticleSystem())
+
+             particleSystems[i]
+                 .initParticles(particlesPerSystem)
+         }
+
      }
 
 
